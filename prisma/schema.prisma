@@ -1,0 +1,44 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// this will be shown to user at first page of a course
+
+model Course {
+  id         Int    @id @default(autoincrement())
+  coursename String
+  thumbnails String?
+  folders    Folder[]
+}
+
+// one course can have a  multiple folders from this
+model Folder {
+  id         Int    @id @default(autoincrement())
+  folderName String
+  courseid   Int
+  course     Course @relation(fields: [courseid],references: [id])
+  video      Videos[]
+}
+
+// one folder can have a multiple videos
+// here the thumbnail can be empty as well
+
+model  Videos{
+  id         Int    @id @default(autoincrement())
+  folderid   Int
+  videokey  String
+  thumbnail  String?
+  folder     Folder @relation(fields: [folderid] , references: [id])
+  
+}
